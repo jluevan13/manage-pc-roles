@@ -8,5 +8,5 @@ terraform {
 }
 
 provider "prismacloud" {
-  json_config_file = "/Users/user-name/prismacloud_auth.json"
+  json_config_file = "/Users/jluevano/prismacloud_auth.json"
 }

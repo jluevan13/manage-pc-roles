@@ -1,5 +1,3 @@
-# mapping of Role to repository ids
-# this is used to set which repositories a role has access to
 locals {
   repo_list = [
     {
@@ -9,16 +7,15 @@ locals {
   ]
 }
 
-# get all account groups from Prisma cloud
+# fetch all account groups from Prisma cloud
 data "prismacloud_account_groups" "example" {}
 
 # create a role for each account group
-# Role name is derived from the Account Group name
-# Account Group Ids is the account group id that the role has access to
-# Code Repository id is the repository id that the role has access to
 resource "prismacloud_user_role" "example" {
-  for_each            = { for index, group in data.prismacloud_account_groups.example.listing : group.group_id => group }
-  name                = "${each.value.name} - Role"
+  for_each = { for index, group in data.prismacloud_account_groups.example.listing : group.group_id => group }
+  # name     = "${each.value.name} - Role"
+  # name                = "${trimsuffix(each.value.name, ' - ')} - Role"
+  name                = "${split(" - ", each.value.name)[0]} - Role"
   description         = "Made by Terraform"
   role_type           = "Account Group Admin" # permission group name
   account_group_ids   = [each.value.group_id]
